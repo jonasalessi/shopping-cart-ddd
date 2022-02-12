@@ -1,0 +1,19 @@
+{
+  "name": "clean-architecture",
+  "version": "1.0.0",
+  "description": "Clean Architecture",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "tsc && jest dist/"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^4.5.5"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.4.0",
+    "jest": "^27.5.0"
+  }
+}
