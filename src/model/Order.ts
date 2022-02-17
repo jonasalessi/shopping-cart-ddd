@@ -1,15 +1,11 @@
 import { Cupom } from "./Cupom";
 import { Customer } from "./Customer";
-import { ProductPackage } from "./OrderProduct"; 
+import { OrderProduct } from "./OrderProduct"; 
 
-export class Order {
-  private products: ProductPackage[];
+export class Order { 
   private cupom?: Cupom
-  customer: Customer;
-
-  constructor(products: Array<ProductPackage>, customer: Customer) {
-    this.products = products;
-    this.customer = customer;
+ 
+  constructor(readonly products: Array<OrderProduct>, readonly customer: Customer) { 
   }
 
   getTotal(): number {
@@ -18,7 +14,7 @@ export class Order {
     return total;
   }
 
-  applyCupom(cupom: Cupom): Order{
+  addCupom(cupom: Cupom): Order{
     this.cupom = cupom;
     return this;
   }

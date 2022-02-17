@@ -1,13 +1,8 @@
 import { Product } from "./Product";
 
-export class ProductPackage {
-  private product: Product;
-  private quantity: number
+export class OrderProduct {
 
-  constructor(product: Product, quantity: number) {
-    this.product = product;
-    this.quantity = quantity;
-  }
+  constructor(readonly product: Product, readonly quantity: number) {}
 
   getTotal(): number {
     return this.product.value * this.quantity;

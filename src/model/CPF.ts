@@ -1,47 +1,50 @@
-export class CPF {
 
-    digits: string;
+export class Cpf {
+    private CPF_SIZE = 11;
+
+    private digits: string;
 
     constructor(digits: string) { 
-        this.digits = this.requireValidCPF(digits);
+        if(!this.isValidCPF(digits)) {
+            throw new CpfInvalid(`Cpf ${digits} is not a valid!`)
+        } 
+        this.digits = digits;
     }
 
-    private requireValidCPF(value: string): string {
-        const str = this.cleanUp(value);
-        this.requireSize(str);
-        const nineDigits = str.substring(0, 9); 
-        const firstDigit = this.calculateFirstDigit(nineDigits);
-        const secondDigit = this.calculateSecondDigit(nineDigits + firstDigit);
-        if (nineDigits + firstDigit + secondDigit === str) {
-            return str;
+    getValue() {
+        return this.digits;
+    }
+
+    private isValidCPF(value: string): boolean {
+        const cpf = this.cleanUp(value);
+        if(!this.isValidSize(cpf)) return false;
+        const nineDigits = cpf.split('').map(s => Number(s)).slice(0, 9)
+        const firstDigit = this.calculateDigit(nineDigits, 10);
+        const secondDigit = this.calculateDigit([...nineDigits, firstDigit], 11);
+        const cpfRecalculated = [...nineDigits, firstDigit, secondDigit].join('')
+        if (cpfRecalculated === cpf) {
+            return true;
         }  
-        throw new CpfInvalid(`Cpf ${value} invalid!`)
+        return false
     }
 
     private cleanUp(value: string) {
-        return value.replace(/([^\d])/mg, '');
+        return value.replace(/\D/mg, '');
     }
 
-    private requireSize(str: string) {
-        if (str.length != 11) {
-            throw new CpfInvalid('Cpf requires 11 numbers!');
-        }
-    } 
+    private isValidSize(str: string) {
+        return str.length == this.CPF_SIZE
+    }  
 
-    private calculateFirstDigit(nineDigits: string): string {
-        const firstRest = nineDigits
-        .split('')
-        .map((val, idx) => Number(val) * (10 - idx))
-        .reduce((ac, v) => ac + v, 0) % 11; 
-        return (firstRest < 2 ?  0 : 11 - firstRest).toString();
+    private calculateDigit(cpfDigits: number[], factor: number): number {
+        const secondRest = cpfDigits
+        .map((val, idx) => val * (factor - idx))
+        .reduce((ac, v) => ac + v, 0) % this.CPF_SIZE;
+        return this.calculateRestDigit(secondRest);
     }
 
-    private calculateSecondDigit(tenDigits: string): string {
-        const secondRest = tenDigits
-        .split('')
-        .map((val, idx) => Number(val) * (11 - idx))
-        .reduce((ac, v) => ac + v, 0) % 11;
-        return  (secondRest < 2 ?  0 : 11 - secondRest).toString(); 
+    private calculateRestDigit(cpfDigits: number): number {
+        return cpfDigits < 2 ?  0 : this.CPF_SIZE - cpfDigits; 
     }
 } 
 

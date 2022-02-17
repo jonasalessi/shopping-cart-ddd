@@ -1,9 +1,10 @@
-import { CPF } from "./CPF";
+import { Cpf } from "./CPF";
 
+ 
 export class Customer {
-  cpf: CPF;
+  cpf: Cpf;
 
-  constructor(cpf: CPF) {
-    this.cpf = cpf;
+  constructor(cpf: string) {
+    this.cpf = new Cpf(cpf);
   }
 }

@@ -1,11 +1,6 @@
-export class Cupom {
+export class Cupom { 
 
-  private readonly value: number;
-  private readonly type: CupomType;
-
-  constructor(value: number, type: CupomType) {
-    this.value = value;
-    this.type = type;
+  constructor(readonly value: number, readonly type: CupomType) { 
   }
 
   applyValue(total: number): number {
