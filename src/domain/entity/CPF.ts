@@ -2,7 +2,7 @@
 export class Cpf {
     private CPF_SIZE = 11;
 
-    private digits: string;
+    private readonly digits: string;
 
     constructor(digits: string) { 
         if(!this.isValidCPF(digits)) {
@@ -22,10 +22,7 @@ export class Cpf {
         const firstDigit = this.calculateDigit(nineDigits, 10);
         const secondDigit = this.calculateDigit([...nineDigits, firstDigit], 11);
         const cpfRecalculated = [...nineDigits, firstDigit, secondDigit].join('')
-        if (cpfRecalculated === cpf) {
-            return true;
-        }  
-        return false
+        return cpfRecalculated === cpf;
     }
 
     private cleanUp(value: string) {
