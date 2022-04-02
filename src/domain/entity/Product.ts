@@ -6,7 +6,8 @@ export class Product {
     readonly name: string, 
     readonly description: string, 
     readonly value: number,
-    readonly technicalDetails?: TechnicalDetails
+    readonly technicalDetails?: TechnicalDetails,
+    readonly id: number = 0
     ) { }
 
     getVolume () {

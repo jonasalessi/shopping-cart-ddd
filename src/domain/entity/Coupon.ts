@@ -1,6 +1,6 @@
 export class Coupon {
 
-  constructor(readonly value: number, readonly type: CouponType, readonly expired?: Date) {
+  constructor(readonly code: string, readonly value: number, readonly type: CouponType, readonly expired?: Date) {
   }
 
   applyValue(total: number): number {
@@ -14,8 +14,8 @@ export class Coupon {
     return today.getTime()  > this.expired.getTime();
   } 
 
-  static ofPercent(percent: number, expired?: Date): Coupon {
-    return new Coupon(percent, CouponType.PERCENTAGE, expired);
+  static ofPercent(code: string, percent: number, expired?: Date): Coupon {
+    return new Coupon(code, percent, CouponType.PERCENTAGE, expired);
   }
 
 }

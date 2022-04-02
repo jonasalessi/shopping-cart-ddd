@@ -7,7 +7,8 @@ describe('Delivery.ts', () => {
 
   test('Should calculate minimal value equals 10.00', () => {
     const product = new Product('Camera', '', 1000, new TechnicalDetails(0.9, 10, 10, 10));
-    const delivery = new Freight([new OrderProduct(product, 1)]);
+    const delivery = new Freight();
+    delivery.addProduct(new OrderProduct(product, 1));
     const value = delivery.getTotal();
     expect(value).toBe(10);
   })
@@ -16,7 +17,10 @@ describe('Delivery.ts', () => {
     const camera = new Product('Camera', '', 0, new TechnicalDetails(0.9, 10, 10, 10));
     const guitar = new Product('Guitar', '', 0, new TechnicalDetails(3, 100, 30, 10));
     const freezer = new Product('Freezer', '', 0, new TechnicalDetails(40, 200, 100, 50));
-    const delivery = new Freight([new OrderProduct(camera, 1), new OrderProduct(guitar, 1), new OrderProduct(freezer, 1)]);
+    const delivery = new Freight();
+    delivery.addProduct(new OrderProduct(camera, 1));
+    delivery.addProduct(new OrderProduct(guitar, 1));
+    delivery.addProduct(new OrderProduct(freezer, 1));
     const value = delivery.getTotal();
     expect(value).toBe(439);
   })

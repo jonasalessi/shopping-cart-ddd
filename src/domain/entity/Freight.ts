@@ -5,7 +5,7 @@ const METER_FACTOR = 100;
 
 export class Freight {
 
-  constructor(readonly products: Array<OrderProduct>) { }
+  private readonly products: Array<OrderProduct> = []
 
   private calculateBy(orderProduct: OrderProduct): number {
     const volume = orderProduct.product.getVolume();
@@ -15,6 +15,10 @@ export class Freight {
     }
     return (volume * DISTANCE_KM * (density / METER_FACTOR)) * orderProduct.quantity;
   }
+
+  addProduct(orderProduct: OrderProduct) {
+    this.products.push(orderProduct);
+}
 
   getTotal(): number {
     const total = this.products

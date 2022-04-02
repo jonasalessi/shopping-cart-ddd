@@ -1,4 +1,4 @@
-import {  Cpf, CpfInvalid } from "../../src/domain/entity/CPF"
+import { Cpf, CpfInvalid } from "../../src/domain/entity/CPF";
 
 const validCPFs = [
   '111.444.777-35',
