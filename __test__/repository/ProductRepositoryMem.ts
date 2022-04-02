@@ -9,7 +9,12 @@ export default class ProductRepositoryMem implements ProductRepository {
     return Promise.resolve(this.data.filter(it => ids.indexOf(it.id) > -1))
   }
 
-  save(product: Product): Promise<Product> {
+  async saveAll(products: Product[]): Promise<Product[]> {
+    const prods = await Promise.all(products.map(this.save.bind(this)))
+    return Promise.resolve(prods)
+  }
+
+  async save(product: Product): Promise<Product> {
     this.data.push(product);
     return Promise.resolve(product);
   }
