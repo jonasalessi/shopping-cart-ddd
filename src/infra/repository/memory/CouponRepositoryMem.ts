@@ -1,9 +1,8 @@
-import { Coupon } from "../../src/domain/entity/Coupon";
-import CouponRepository from "../../src/domain/repository/CouponRepository";
+import { Coupon } from "../../../domain/entity/Coupon";
+import CouponRepository from "../../../domain/repository/CouponRepository";
 
 export default class CouponRepositoryMem implements CouponRepository {
-  
-  private readonly data: Coupon[] = [];
+  private data: Coupon[] = [];
 
   findByCode(code: string): Promise<Coupon | undefined> {
     return Promise.resolve(this.data.find(coupon => coupon.code === code))
@@ -13,4 +12,8 @@ export default class CouponRepositoryMem implements CouponRepository {
     return Promise.resolve(coupon);
   }
  
+  deleteAll(): Promise<void> {
+   this.data = []
+   return Promise.resolve();
+  }
 }

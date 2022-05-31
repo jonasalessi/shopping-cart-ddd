@@ -1,0 +1,1 @@
+Initially the data access implementation was done using in memory.
