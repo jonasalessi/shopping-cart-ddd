@@ -1,7 +1,7 @@
 import ValidateCoupon from "../../src/application/usecase/ValidateCoupon";
 import { Coupon, CouponType } from "../../src/domain/entity/Coupon";
 import CouponRepository from "../../src/domain/repository/CouponRepository";
-import CouponRepositoryMem from "../repository/CouponRepositoryMem";
+import CouponRepositoryMem from "../../src/infra/repository/memory/CouponRepositoryMem";
 
 describe("ValidateCoupon", () => {
 

@@ -2,35 +2,35 @@ import PlaceOrder, { PlaceOrderCommand } from "../../src/application/usecase/Pla
 import { Coupon, CouponType } from "../../src/domain/entity/Coupon";
 import { Product } from "../../src/domain/entity/Product";
 import { TechnicalDetails } from "../../src/domain/entity/TechnicalDetails";
-import CouponRepository from "../../src/domain/repository/CouponRepository";
-import OrderRepository from "../../src/domain/repository/OrderRepository";
-import ProductRepository from "../../src/domain/repository/ProductRepository";
-import CouponRepositoryMem from "../repository/CouponRepositoryMem";
-import OrderRepositoryMem from "../repository/OrderRepositoryMem";
-import ProductRepositoryMem from "../repository/ProductRepositoryMem";
+import RepositoryFactory from "../../src/domain/factory/RepositoryFactory";
+import RepositoryFactoryDatabase from "../../src/infra/repository/database/RepositoryFactoryDatabase";
 
 describe("PlaceOrder.ts", () => {
-  let productRepository: ProductRepository;
-  let orderRepository: OrderRepository;
-  let couponRepository: CouponRepository;
+ 
   const CPF = '935.411.347-80';
+  
+  let repositoryFactory: RepositoryFactory;
 
-  beforeEach(async () => {
-    productRepository = new ProductRepositoryMem();
-    orderRepository = new OrderRepositoryMem();
-    couponRepository = new CouponRepositoryMem();
+  beforeAll(async () => {
+    repositoryFactory = new RepositoryFactoryDatabase();
+  });
+
+  afterEach(() => {
+    repositoryFactory.createOrderRepository().deleteAll();
+    repositoryFactory.createCouponRepository().deleteAll();
   });
 
   const loadProductsDummies = async () => {
+    const productRepository = repositoryFactory.createProductRepository();
     await productRepository.save(new Product('Item 1', '', 1000, new TechnicalDetails(3, 100, 30, 10), 1));
     await productRepository.save(new Product('Item 2', '', 5000, new TechnicalDetails(20, 100, 50, 50), 2));
     await productRepository.save(new Product('Item 3', '', 30, new TechnicalDetails(1, 10, 10, 10), 3));
   }
 
   test('Should execute an order with total 4872', async () => {
-    await couponRepository.save(new Coupon("VALE20", 20, CouponType.PERCENTAGE));
+    await repositoryFactory.createCouponRepository().save(new Coupon("VALE20", 20, CouponType.PERCENTAGE));
     await loadProductsDummies();
-    const placeOrder = new PlaceOrder(productRepository, orderRepository, couponRepository);
+    const placeOrder = new PlaceOrder(repositoryFactory);
     const command: PlaceOrderCommand = {
       cpf: CPF,
       orderItems: [
@@ -46,7 +46,7 @@ describe("PlaceOrder.ts", () => {
   });
 
   test('Should return an order with code 202100000002', async () => {
-    const placeOrder = new PlaceOrder(productRepository, orderRepository, couponRepository);
+    const placeOrder = new PlaceOrder(repositoryFactory);
     await loadProductsDummies();
     const command: PlaceOrderCommand = {
       cpf: CPF,
@@ -61,7 +61,7 @@ describe("PlaceOrder.ts", () => {
   })
 
   test('Should not accept order with product invalid', async () => {
-    const placeOrder = new PlaceOrder(productRepository, orderRepository, couponRepository);
+    const placeOrder = new PlaceOrder(repositoryFactory);
     const command: PlaceOrderCommand = {
       cpf: CPF,
       orderItems: [

@@ -11,11 +11,11 @@ export class SimulateFreight {
     const products = await this.getOrderProductsBy(command.items)
     const freight = new Freight()
     products.forEach(it => freight.addProduct(it))
-    return Promise.resolve(freight.getTotal());
+    return freight.getTotal();
   }
 
   createOrderBy = (items: Item[]) => (product: Product) => {
-    const item = items.find(it => it.id == product.id);
+    const item = items.find(it => it.id === product.id);
     if (!item) throw new Error(`Product ${product.id} invalid!`);
     return new OrderProduct(product, item.quantity);
   }

@@ -6,6 +6,6 @@ export default class ValidateCoupon {
   
   async execute(coupon: string): Promise<boolean> {
     const isValid = (await this.couponRepository.findByCode(coupon)) != undefined;
-    return Promise.resolve(isValid === true);
+    return isValid === true;
   }
 }

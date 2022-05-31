@@ -1,28 +1,46 @@
-import {Coupon} from "./Coupon";
-import {Customer} from "./Customer";
-import {Freight} from "./Freight";
+import { Coupon } from "./Coupon";
+import { Cpf } from "./CPF"; 
+import { Freight } from "./Freight";
 import OrderCode from "./OrderCode";
-import {OrderProduct} from "./OrderProduct";
+import { OrderProduct } from "./OrderProduct";
 import { Product } from "./Product";
 
 export class Order {
- 
+
     private coupon?: Coupon
-    private readonly _code: OrderCode;
+    private readonly code: OrderCode;
     private readonly freight: Freight
     private readonly products: Array<OrderProduct> = []
+    private readonly cpf: Cpf;
 
     constructor(
-        readonly customer: Customer,
+        cpf: string,
         readonly issueOrder: Date = new Date(),
         readonly sequence: number = 1
     ) {
+        this.cpf = new Cpf(cpf);
         this.freight = new Freight()
-        this._code = new OrderCode(issueOrder, sequence)
+        this.code = new OrderCode(issueOrder, sequence)
     }
 
-    get code(): OrderCode {
-        return this._code
+    getProducts(): Array<OrderProduct> {
+        return [...this.products]
+    }
+
+    getFreightTotal(): number {
+        return this.freight.getTotal()
+    }
+
+    getCouponCode(): string | undefined {
+        return this.coupon?.code;
+    }
+
+    getCpf(): string {
+        return this.cpf.getValue();
+    }
+
+    getOrderCode(): string {
+        return this.code.value
     }
 
     addProduct(product: Product, quantity: number) {

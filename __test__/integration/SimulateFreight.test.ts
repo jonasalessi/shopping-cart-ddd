@@ -2,7 +2,7 @@ import { SimulateFreight } from "../../src/application/usecase/SimulateFreight";
 import { Product } from "../../src/domain/entity/Product";
 import { TechnicalDetails } from "../../src/domain/entity/TechnicalDetails";
 import ProductRepository from "../../src/domain/repository/ProductRepository";
-import ProductRepositoryMem from "../repository/ProductRepositoryMem";
+import ProductRepositoryMem from "../../src/infra/repository/memory/ProductRepositoryMem";
 
 describe("SimulateFreight", () => {
   let productRepository: ProductRepository;

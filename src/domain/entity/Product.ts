@@ -11,12 +11,10 @@ export class Product {
     ) { }
 
     getVolume () {
-      if (this.technicalDetails) return this.technicalDetails.getVolume();
-      return 0;
+      return this.technicalDetails?.getVolume() || 0;
     }
   
     getDensity () {
-      if (this.technicalDetails) return this.technicalDetails.getDensity();
-      return 0;
+      return this.technicalDetails?.getDensity() ||  0;
     }
 }
