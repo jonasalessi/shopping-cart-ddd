@@ -6,11 +6,6 @@ import { TechnicalDetails } from "../../src/domain/entity/TechnicalDetails";
 
 describe("Order.ts", () => {
   const cpf = "397.974.888-02";
-  const coupons = [
-    Coupon.ofPercent('C10', 10, new Date(2021, 1, 5, 1, 20, 0)),
-    Coupon.ofPercent('CC10', 10, new Date(2021, 1, 10, 0, 20, 0)),
-    Coupon.ofPercent('CCC10', 10, new Date(2021, 1, 6, 1, 20, 0))
-  ]
 
   test('Should create a order with $300 when has 3 items for 100 each', () => {
     const order = new Order(cpf);
@@ -21,12 +16,12 @@ describe("Order.ts", () => {
     expect(total).toBe(300);
   });
 
-  it.each(coupons)('Should return $270 when apply valid coupon of 10% over $300', (coupon) => {
+  test('Should return $270 when apply valid coupon of 10% over $300', () => {
     const issueOrder = new Date(2021, 1, 1, 1, 20, 0);
     const order = new Order(cpf, issueOrder);
     order.addProduct(new Product('Item 1', 'Description 1', 100.0), 2);
     order.addProduct(new Product('Item 2', 'Description 2', 100.0), 1)
-    order.addCoupon(coupon);
+    order.addCoupon(Coupon.ofPercent('C10', 10, new Date(2021, 1, 5, 1, 20, 0)));
     expect(order.getTotal()).toBe(270);
   });
 

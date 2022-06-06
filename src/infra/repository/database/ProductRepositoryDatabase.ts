@@ -13,20 +13,21 @@ export default class ProductRepositoryData implements ProductRepository {
   }
 
   async findProductByIds(ids: number[]): Promise<Product[]> {
-    const result = await this.connection.query("select * from product where id in ($1)", [ids])
-    return result.map((prod: any) => 
-      new Product(prod.name, prod.description, prod.price, 
+    const result = await this.connection.query("select * from product where id in ($1)", [ids.join(',')]);
+    return result.map((prod: any) =>
+      new Product(prod.name, prod.description, prod.price,
         new TechnicalDetails(prod.weight, prod.height, prod.width, prod.length)));
   }
 
-  async save(product: Product): Promise<void> {
+  async save(product: Product): Promise<number> {
     const tec = product.technicalDetails;
-    await this.connection.query(`
+    const [{id}] = await this.connection.query(`
     insert into product (name, description, price, width, height, length, weight) 
-    values ($1, $2, $3, $4, $5, $6, $7)
-    `, [product.name, product.description, product.value, tec?.widthCm, tec?.heightCm, 
-      tec?.lengthCm, tec?.weightKg]);
-    }
+    values ($1, $2, $3, $4, $5, $6, $7) returning id
+    `, [product.name, product.description, product.value, tec?.widthCm, tec?.heightCm,
+    tec?.lengthCm, tec?.weightKg]);
+    return id;
+  }
 
   async deleteAll(): Promise<void> {
     await this.connection.query("delete from product")

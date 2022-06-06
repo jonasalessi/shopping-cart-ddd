@@ -10,8 +10,7 @@ export default class GetOrderByCode {
   }
   
   async execute(code: string): Promise<Order | undefined> {
-    const order = await this.orderRepository.findByCode(code);
-    return order;
+    return await this.orderRepository.findByCode(code);
   }
 
   

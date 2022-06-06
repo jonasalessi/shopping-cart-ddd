@@ -23,8 +23,8 @@ create table p_order (
 	cpf text,
 	issue_date timestamp,
 	freight numeric,
-	sequence integer,
 	total numeric,
+	sequence numeric,
 	primary key (id)
 );
 

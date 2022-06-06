@@ -3,32 +3,40 @@ import { Coupon, CouponType } from "../../src/domain/entity/Coupon";
 import { Product } from "../../src/domain/entity/Product";
 import { TechnicalDetails } from "../../src/domain/entity/TechnicalDetails";
 import RepositoryFactory from "../../src/domain/factory/RepositoryFactory";
-import RepositoryFactoryDatabase from "../../src/infra/repository/database/RepositoryFactoryDatabase";
+import CouponRepository from "../../src/domain/repository/CouponRepository";
+import OrderRepository from "../../src/domain/repository/OrderRepository";
+import ProductRepository from "../../src/domain/repository/ProductRepository";
+import RepositoryFactoryMem from "../../src/infra/repository/memory/RepositoryFactoryMem";
 
 describe("PlaceOrder.ts", () => {
- 
+
   const CPF = '935.411.347-80';
-  
+  let productRepository: ProductRepository;
+  let orderRepository: OrderRepository;
+  let couponRepository: CouponRepository;
   let repositoryFactory: RepositoryFactory;
 
   beforeAll(async () => {
-    repositoryFactory = new RepositoryFactoryDatabase();
+    repositoryFactory = new RepositoryFactoryMem();
+    productRepository = repositoryFactory.createProductRepository();
+    couponRepository = repositoryFactory.createCouponRepository();
+    orderRepository = repositoryFactory.createOrderRepository();
   });
 
-  afterEach(() => {
-    repositoryFactory.createOrderRepository().deleteAll();
-    repositoryFactory.createCouponRepository().deleteAll();
+  beforeEach(() => {
+    orderRepository.deleteAll();
+    couponRepository.deleteAll();
+    productRepository.deleteAll();
   });
 
   const loadProductsDummies = async () => {
-    const productRepository = repositoryFactory.createProductRepository();
     await productRepository.save(new Product('Item 1', '', 1000, new TechnicalDetails(3, 100, 30, 10), 1));
     await productRepository.save(new Product('Item 2', '', 5000, new TechnicalDetails(20, 100, 50, 50), 2));
     await productRepository.save(new Product('Item 3', '', 30, new TechnicalDetails(1, 10, 10, 10), 3));
   }
 
   test('Should execute an order with total 4872', async () => {
-    await repositoryFactory.createCouponRepository().save(new Coupon("VALE20", 20, CouponType.PERCENTAGE));
+    await couponRepository.save(new Coupon("VALE20", 20, CouponType.PERCENTAGE));
     await loadProductsDummies();
     const placeOrder = new PlaceOrder(repositoryFactory);
     const command: PlaceOrderCommand = {

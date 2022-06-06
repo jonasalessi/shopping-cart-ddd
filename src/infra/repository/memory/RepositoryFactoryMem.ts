@@ -7,14 +7,29 @@ import OrderRepositoryMem from "./OrderRepositoryMem";
 import ProductRepositoryMem from './ProductRepositoryMem';
 
 export default class RepositoryFactoryMem implements RepositoryFactory {
+  private static orderInstance: OrderRepository;
+  private static productRepository: ProductRepository;
+  private static couponRepository: CouponRepository;
+
   createOrderRepository(): OrderRepository {
-    return new OrderRepositoryMem()
+    if (!RepositoryFactoryMem.orderInstance) {
+      RepositoryFactoryMem.orderInstance = new OrderRepositoryMem()
+    }
+    return RepositoryFactoryMem.orderInstance
   }
+  
   createProductRepository(): ProductRepository {
-    return new ProductRepositoryMem();
+    if (!RepositoryFactoryMem.productRepository) {
+      RepositoryFactoryMem.productRepository = new ProductRepositoryMem();
+    }
+    return RepositoryFactoryMem.productRepository;
   }
+
   createCouponRepository(): CouponRepository {
-    return new CouponRepositoryMem();
+    if (!RepositoryFactoryMem.couponRepository) {
+      RepositoryFactoryMem.couponRepository = new CouponRepositoryMem();
+    }
+    return RepositoryFactoryMem.couponRepository;
   }
 
 }
