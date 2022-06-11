@@ -45,11 +45,7 @@ export class Cpf {
     }
 } 
 
-export class CpfInvalid {
-    message: string;
-    constructor(message: string) {
-        this.message = message
-    }
+export class CpfInvalid extends Error {
 }
 
 

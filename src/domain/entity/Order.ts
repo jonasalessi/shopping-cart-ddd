@@ -44,6 +44,9 @@ export class Order {
     }
 
     addProduct(product: Product, quantity: number) {
+        if (quantity <= 0) throw new OrderQuantityError("Negative or 0 quantity is not allowed!")
+        if (this.products.find(p => p.product.id === product.id)) 
+            throw new OrderDuplicateProductError(`${product.name} was already in the basket!`)
         const orderProduct = new OrderProduct(product, quantity)
         this.products.push(orderProduct);
         this.freight.addProduct(orderProduct)
@@ -64,3 +67,6 @@ export class Order {
     }
 
 }
+
+export class OrderQuantityError extends Error {}
+export class OrderDuplicateProductError extends Error{}
