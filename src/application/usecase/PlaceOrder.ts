@@ -2,10 +2,9 @@ import { Order } from "../../domain/entity/Order";
 import RepositoryFactory from "../../domain/factory/RepositoryFactory";
 import CouponRepository from "../../domain/repository/CouponRepository";
 import OrderRepository from "../../domain/repository/OrderRepository";
-import ProductRepository from "../../domain/repository/ProductRepository"; 
+import ProductRepository from "../../domain/repository/ProductRepository";
 
 export default class PlaceOrder {
-
   private readonly productRepository: ProductRepository;
   private readonly orderRepository: OrderRepository;
   private readonly couponRepository: CouponRepository;
@@ -24,22 +23,21 @@ export default class PlaceOrder {
     return output;
   }
 
-
   private async applyCoupon(couponCode: string, order: Order) {
     const coupon = await this.couponRepository.findByCode(couponCode);
-    if (coupon) order.addCoupon(coupon); 
+    if (coupon) order.addCoupon(coupon);
   }
 
   private async createOrder(command: PlaceOrderCommand) {
-    const products = await this.productRepository.findProductByIds(command.orderItems.map(item => item.idItem));
-    const productsQuantity = command.orderItems.map(item => {
-      const product = products.find(prod => item.idItem === prod.id);
+    const products = await this.productRepository.findProductByIds(command.orderItems.map((item) => item.idItem));
+    const productsQuantity = command.orderItems.map((item) => {
+      const product = products.find((prod) => item.idItem === prod.id);
       if (!product) throw new Error(`Product ${item.idItem} invalid!`);
       return { product, quantity: item.quantity };
-    })
+    });
     const sequence = await this.orderRepository.nextSequence();
     const order = new Order(command.cpf, command.issueOrder, sequence);
-    productsQuantity.forEach(item => {
+    productsQuantity.forEach((item) => {
       order.addProduct(item.product, item.quantity);
     });
     return order;
@@ -53,10 +51,10 @@ export type PlaceOrderCommand = {
     quantity: number;
   }[];
   coupon?: string;
-  issueOrder: Date
-}
+  issueOrder: Date;
+};
 
 export type PlaceOrderOutput = {
   code: string;
   total: number;
-}
+};

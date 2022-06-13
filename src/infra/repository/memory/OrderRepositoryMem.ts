@@ -2,7 +2,6 @@ import { Order } from "../../../domain/entity/Order";
 import OrderRepository from "../../../domain/repository/OrderRepository";
 
 export default class OrderRepositoryMem implements OrderRepository {
-
   private data: Order[] = [];
 
   async save(order: Order): Promise<void> {
@@ -20,6 +19,6 @@ export default class OrderRepositoryMem implements OrderRepository {
   }
 
   findByCode(code: string): Promise<Order | undefined> {
-    return Promise.resolve(this.data.find(ord => ord.getOrderCode() === code));
+    return Promise.resolve(this.data.find((ord) => ord.getOrderCode() === code));
   }
 }

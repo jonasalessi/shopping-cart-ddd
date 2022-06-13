@@ -1,6 +1,6 @@
 export default class OrderCode {
 
-  private _value: string = "";
+  private _value = "";
 
   constructor(issueOrder: Date, sequence: number) {
     this._value = this.generateCode(issueOrder, sequence)

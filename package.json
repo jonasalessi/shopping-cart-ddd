@@ -6,20 +6,27 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
     "testWatch": "tsc && jest  --watch --coverage dist/"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "pg-promise": "^10.11.1",
-    "typescript": "^4.5.5"
+    "pg-promise": "^10.11.1"
   },
   "devDependencies": {
-    "ts-jest": "^27.1.3",
     "@types/jest": "^27.4.0",
-    "jest": "^27.5.1"
+    "@typescript-eslint/eslint-plugin": "^5.28.0",
+    "@typescript-eslint/parser": "^5.28.0",
+    "eslint": "^8.17.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.3",
+    "typescript": "^4.7.3"
   },
-  "engines" : { 
-    "node" : ">=16.0.0"
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
