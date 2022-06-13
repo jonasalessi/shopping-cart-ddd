@@ -18,17 +18,17 @@ export default class PlaceOrder {
 
   async execute(command: PlaceOrderCommand): Promise<PlaceOrderOutput> {
     const order = await this.createOrder(command);
-    if (command.coupon) {
-      const coupon = await this.couponRepository.findByCode(command.coupon);
-      if (coupon) {
-        order.addCoupon(coupon);
-      }
-    }
+    if (command.coupon) await this.applyCoupon(command.coupon, order);
     const output: PlaceOrderOutput = { code: order.getOrderCode(), total: order.getTotal() };
     await this.orderRepository.save(order);
     return output;
   }
 
+
+  private async applyCoupon(couponCode: string, order: Order) {
+    const coupon = await this.couponRepository.findByCode(couponCode);
+    if (coupon) order.addCoupon(coupon); 
+  }
 
   private async createOrder(command: PlaceOrderCommand) {
     const products = await this.productRepository.findProductByIds(command.orderItems.map(item => item.idItem));
