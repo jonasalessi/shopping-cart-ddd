@@ -1,18 +1,11 @@
-
 import RepositoryFactory from "../../../domain/factory/RepositoryFactory";
 import Connection from "../../database/Connection";
-import PostgreSqlConnectionAdapter from "../../database/PostgreSqlConnectionAdapter";
 import CouponRepositoryDatabase from "./CouponRepositoryDatabase";
 import OrderRepositoryDatabase from "./OrderRepositoryDatabase";
 import ProductRepositoryDatabase from "./ProductRepositoryDatabase";
 
 export default class RepositoryFactoryDatabase implements RepositoryFactory {
- 
-  private connection: Connection;
- 
-  constructor() {
-    this.connection = new PostgreSqlConnectionAdapter();
-  }
+  constructor(private readonly connection: Connection) {}
 
   createOrderRepository() {
     return new OrderRepositoryDatabase(this.connection);
@@ -25,5 +18,4 @@ export default class RepositoryFactoryDatabase implements RepositoryFactory {
   createCouponRepository() {
     return new CouponRepositoryDatabase(this.connection);
   }
-
 }
