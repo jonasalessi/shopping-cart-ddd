@@ -14,7 +14,7 @@ services:
   flyway_postgres:
     depends_on:
       - db
-    image: flyway
+    image: flyway/flyway
     build: ./flyway
     volumes:
       - ./flyway/config:/flyway/conf

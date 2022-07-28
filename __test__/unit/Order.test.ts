@@ -1,7 +1,7 @@
-import { Coupon } from "../../src/domain/entity/Coupon";
-import { OrderQuantityError, OrderDuplicateProductError, Order } from "../../src/domain/entity/Order";
-import { Product } from "../../src/domain/entity/Product";
-import { TechnicalDetails } from "../../src/domain/entity/TechnicalDetails";
+import { Coupon } from "domain/entity/Coupon";
+import { OrderQuantityNegativeError, OrderDuplicateProductError, Order } from "domain/entity/Order";
+import { Product } from "domain/entity/Product";
+import { TechnicalDetails } from "domain/entity/TechnicalDetails";
 
 const cpf = "397.974.888-02";
 describe("Order.ts", () => {
@@ -51,7 +51,8 @@ describe("Order.ts", () => {
   test('Should not create order with negative quantity', () => {
     const issueOrder = new Date(2021, 2, 1, 1, 20, 0);
     const order = new Order(cpf, issueOrder, 2);
-    expect(() => order.addProduct(new Product('Item 2', 'Description 2', 100.0), -1)).toThrow(OrderQuantityError);
+    expect(() => order.addProduct(new Product('Item 2', 'Description 2', 100.0), -1))
+      .toThrow(OrderQuantityNegativeError);
   });
 
   test('Should not create order with duplicated product', () => {
@@ -61,6 +62,6 @@ describe("Order.ts", () => {
     order.addProduct(product, 1);
     expect(() => order.addProduct(product, 2)).toThrow(OrderDuplicateProductError);
   });
-  
+
 });
 

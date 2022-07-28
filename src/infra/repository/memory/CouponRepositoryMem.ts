@@ -1,5 +1,5 @@
-import { Coupon } from "../../../domain/entity/Coupon";
-import CouponRepository from "../../../domain/repository/CouponRepository";
+import { Coupon } from "domain/entity/Coupon";
+import CouponRepository from "domain/repository/CouponRepository";
 
 export default class CouponRepositoryMem implements CouponRepository {
   private data: Coupon[] = [];
@@ -11,9 +11,9 @@ export default class CouponRepositoryMem implements CouponRepository {
     this.data.push(coupon);
     return Promise.resolve(coupon);
   }
- 
+
   deleteAll(): Promise<void> {
-   this.data = []
-   return Promise.resolve();
+    this.data = []
+    return Promise.resolve();
   }
 }

@@ -1,12 +1,12 @@
-import { SimulateFreight } from "../../src/application/usecase/SimulateFreight";
-import { Product } from "../../src/domain/entity/Product";
-import { TechnicalDetails } from "../../src/domain/entity/TechnicalDetails";
-import ProductRepository from "../../src/domain/repository/ProductRepository";
-import ProductRepositoryMem from "../../src/infra/repository/memory/ProductRepositoryMem";
+import { SimulateFreight } from "application/usecase/SimulateFreight";
+import { Product } from "domain/entity/Product";
+import { TechnicalDetails } from "domain/entity/TechnicalDetails";
+import ProductRepository from "domain/repository/ProductRepository";
+import ProductRepositoryMem from "infra/repository/memory/ProductRepositoryMem";
 
 describe("SimulateFreight", () => {
   let productRepository: ProductRepository;
-  
+
   beforeEach(async () => {
     productRepository = new ProductRepositoryMem();
   });
@@ -19,11 +19,11 @@ describe("SimulateFreight", () => {
   }
 
 
-test("Should simulate freight of 3 products with totals of 439.90", async () => {
+  test("Should simulate freight of 3 products with totals of 439.90", async () => {
     await loadProductsDummies();
-    const command = {items: [{id: 1, quantity: 1},{id: 2, quantity: 1},{id: 3, quantity: 1}]};
+    const command = { items: [{ id: 1, quantity: 1 }, { id: 2, quantity: 1 }, { id: 3, quantity: 1 }] };
     const value = await new SimulateFreight(productRepository).execute(command);
     expect(value).toBe(439);
-})
+  })
 
 })

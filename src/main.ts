@@ -1,7 +1,7 @@
+import { BeanFactoryImpl } from "infra/BeaFactoryImpl";
 import PostgreSqlConnectionAdapter from "./infra/database/PostgreSqlConnectionAdapter";
 import ExpressHttp from "./infra/http/ExpressHttp";
 import Router from "./infra/http/Router";
-import RepositoryFactoryDatabase from "./infra/repository/database/RepositoryFactoryDatabase";
 
 /**
  * This class knows the concrete implementations
@@ -10,8 +10,8 @@ import RepositoryFactoryDatabase from "./infra/repository/database/RepositoryFac
 
 console.log("Initializing...");
 const connection = new PostgreSqlConnectionAdapter();
-const repositoryFactory = new RepositoryFactoryDatabase(connection);
+const beanFactory = new BeanFactoryImpl(connection);
 const http = new ExpressHttp();
-const router = new Router(http, repositoryFactory);
+const router = new Router(http, beanFactory);
 router.init();
 http.listen(8008).then(() => console.log("Startup ok!"));

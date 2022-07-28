@@ -1,5 +1,5 @@
-import { Order } from "../../../domain/entity/Order";
-import OrderRepository from "../../../domain/repository/OrderRepository";
+import { Order } from "domain/entity/Order";
+import OrderRepository from "domain/repository/OrderRepository";
 
 export default class OrderRepositoryMem implements OrderRepository {
   private data: Order[] = [];

@@ -1,7 +1,7 @@
-import { Freight } from "../../domain/entity/Freight";
-import { Product } from "../../domain/entity/Product";
-import { OrderProduct } from "../../domain/entity/OrderProduct";
-import ProductRepository from "../../domain/repository/ProductRepository";
+import { Freight } from "domain/entity/Freight";
+import { Product } from "domain/entity/Product";
+import { OrderProduct } from "domain/entity/OrderProduct";
+import ProductRepository from "domain/repository/ProductRepository";
 
 export class SimulateFreight {
 

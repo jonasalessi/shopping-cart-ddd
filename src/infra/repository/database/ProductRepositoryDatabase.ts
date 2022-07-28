@@ -1,15 +1,15 @@
-import { Product } from "../../../domain/entity/Product";
-import { TechnicalDetails } from "../../../domain/entity/TechnicalDetails";
-import ProductRepository from "../../../domain/repository/ProductRepository";
-import Connection from "../../database/Connection";
+import { Product } from "domain/entity/Product";
+import { TechnicalDetails } from "domain/entity/TechnicalDetails";
+import ProductRepository from "domain/repository/ProductRepository";
+import Connection from "infra/database/Connection";
 
 
 export default class ProductRepositoryData implements ProductRepository {
 
   constructor(private readonly connection: Connection) { }
 
-  async saveAll(products: Product[]): Promise<void> {
-    await Promise.all(products.map(product => this.save(product)));
+  async saveAll(products: Product[]): Promise<Product[]> {
+    return await Promise.all(products.map(product => this.save(product)));
   }
 
   async findProductByIds(ids: number[]): Promise<Product[]> {
@@ -19,18 +19,18 @@ export default class ProductRepositoryData implements ProductRepository {
         new TechnicalDetails(prod.weight, prod.height, prod.width, prod.length)));
   }
 
-  async save(product: Product): Promise<number> {
+  async save(product: Product): Promise<Product> {
     const tec = product.technicalDetails;
-    const [{id}] = await this.connection.query(`
+    const [{ id }] = await this.connection.query(`
     insert into product (name, description, price, width, height, length, weight) 
     values ($1, $2, $3, $4, $5, $6, $7) returning id
     `, [product.name, product.description, product.value, tec?.widthCm, tec?.heightCm,
     tec?.lengthCm, tec?.weightKg]);
-    return id;
+    return { ...product, id } as Product;
   }
 
-  async deleteAll(): Promise<void> {
-    await this.connection.query("delete from product")
+  async deleteAllById(ids: number[]): Promise<void> {
+    await this.connection.query("delete from product where id in ($1)", ids);
   }
 
 }

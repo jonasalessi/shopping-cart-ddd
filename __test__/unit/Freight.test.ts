@@ -1,7 +1,7 @@
-import { Freight } from "../../src/domain/entity/Freight"
-import { OrderProduct } from "../../src/domain/entity/OrderProduct"
-import { Product } from "../../src/domain/entity/Product"
-import { TechnicalDetails } from "../../src/domain/entity/TechnicalDetails"
+import { Freight } from "domain/entity/Freight"
+import { OrderProduct } from "domain/entity/OrderProduct"
+import { Product } from "domain/entity/Product"
+import { TechnicalDetails } from "domain/entity/TechnicalDetails"
 
 describe('Delivery.ts', () => {
 

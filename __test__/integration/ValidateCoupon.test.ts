@@ -1,12 +1,12 @@
-import ValidateCoupon from "../../src/application/usecase/ValidateCoupon";
-import { Coupon, CouponType } from "../../src/domain/entity/Coupon";
-import CouponRepository from "../../src/domain/repository/CouponRepository";
-import CouponRepositoryMem from "../../src/infra/repository/memory/CouponRepositoryMem";
+import ValidateCoupon from "application/usecase/ValidateCoupon";
+import { Coupon, CouponType } from "domain/entity/Coupon";
+import CouponRepository from "domain/repository/CouponRepository";
+import CouponRepositoryMem from "infra/repository/memory/CouponRepositoryMem";
 
 describe("ValidateCoupon", () => {
 
   let couponRepository: CouponRepository;
-  
+
   beforeEach(() => {
     couponRepository = new CouponRepositoryMem();
   });

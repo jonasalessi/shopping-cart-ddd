@@ -1,5 +1,5 @@
 import { Coupon } from "./Coupon";
-import { Cpf } from "./CPF"; 
+import { Cpf } from "./CPF";
 import { Freight } from "./Freight";
 import OrderCode from "./OrderCode";
 import { OrderProduct } from "./OrderProduct";
@@ -44,9 +44,12 @@ export class Order {
     }
 
     addProduct(product: Product, quantity: number) {
-        if (quantity <= 0) throw new OrderQuantityError("Negative or 0 quantity is not allowed!")
-        if (this.products.find(p => p.product.id === product.id)) 
-            throw new OrderDuplicateProductError(`${product.name} was already in the basket!`)
+        if (quantity <= 0) {
+            throw new OrderQuantityNegativeError();
+        }
+        if (this.products.find(p => p.product.id === product.id)) {
+            throw new OrderDuplicateProductError(product.name);
+        }
         const orderProduct = new OrderProduct(product, quantity)
         this.products.push(orderProduct);
         this.freight.addProduct(orderProduct)
@@ -60,13 +63,20 @@ export class Order {
     }
 
     addCoupon(coupon: Coupon): void {
-        if (coupon.isExpired(this.issueOrder)) {
-            return;
-        }
+        if (coupon.isExpired(this.issueOrder)) return;
         this.coupon = coupon;
     }
 
 }
 
-export class OrderQuantityError extends Error {}
-export class OrderDuplicateProductError extends Error{}
+export class OrderQuantityNegativeError extends Error {
+    constructor() {
+        super("Negative or 0 quantity is not allowed!")
+    }
+}
+
+export class OrderDuplicateProductError extends Error {
+    constructor(productName: string) {
+        super(`${productName} was already in the basket!`)
+    }
+}

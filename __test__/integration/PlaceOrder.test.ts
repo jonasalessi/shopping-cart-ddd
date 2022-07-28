@@ -1,46 +1,44 @@
-import PlaceOrder, { PlaceOrderCommand } from "../../src/application/usecase/PlaceOrder"
-import { Coupon, CouponType } from "../../src/domain/entity/Coupon";
-import { Product } from "../../src/domain/entity/Product";
-import { TechnicalDetails } from "../../src/domain/entity/TechnicalDetails";
-import RepositoryFactory from "../../src/domain/factory/RepositoryFactory";
-import CouponRepository from "../../src/domain/repository/CouponRepository";
-import OrderRepository from "../../src/domain/repository/OrderRepository";
-import ProductRepository from "../../src/domain/repository/ProductRepository";
-import RepositoryFactoryMem from "../../src/infra/repository/memory/RepositoryFactoryMem";
+import PlaceOrder, { PlaceOrderCommand } from "application/usecase/PlaceOrder"
+import { Coupon, CouponType } from "domain/entity/Coupon";
+import { Product } from "domain/entity/Product";
+import { TechnicalDetails } from "domain/entity/TechnicalDetails";
+import { FAKE_CPF } from "../helpers/customer";
+import BeanFactoryMem from "../BeanFactoryMem";
+import { BeanFactory } from "domain/factory/BeanFactory";
 
 describe("PlaceOrder.ts", () => {
 
-  const CPF = '935.411.347-80';
-  let productRepository: ProductRepository;
-  let orderRepository: OrderRepository;
-  let couponRepository: CouponRepository;
-  let repositoryFactory: RepositoryFactory;
+  let beaFactory: BeanFactory;
+  let products: Product[];
 
   beforeAll(async () => {
-    repositoryFactory = new RepositoryFactoryMem();
-    productRepository = repositoryFactory.createProductRepository();
-    couponRepository = repositoryFactory.createCouponRepository();
-    orderRepository = repositoryFactory.createOrderRepository();
+    beaFactory = new BeanFactoryMem(1);
+    products = await loadProductsDummies();
   });
 
-  beforeEach(() => {
-    orderRepository.deleteAll();
-    couponRepository.deleteAll();
-    productRepository.deleteAll();
+  afterAll(() => {
+    beaFactory.repositories().createOrderRepository().deleteAll();
+    beaFactory.repositories().createCouponRepository().deleteAll();
+    beaFactory.repositories().createProductRepository()
+      .deleteAllById(products.map(it => it.id));
   });
 
-  const loadProductsDummies = async () => {
-    await productRepository.save(new Product('Item 1', '', 1000, new TechnicalDetails(3, 100, 30, 10), 1));
-    await productRepository.save(new Product('Item 2', '', 5000, new TechnicalDetails(20, 100, 50, 50), 2));
-    await productRepository.save(new Product('Item 3', '', 30, new TechnicalDetails(1, 10, 10, 10), 3));
+  const loadProductsDummies = async (): Promise<Product[]> => {
+    const productRepository = beaFactory.repositories().createProductRepository();
+    return [
+      await productRepository.save(new Product('Item 1', '', 1000, new TechnicalDetails(3, 100, 30, 10), 1)),
+      await productRepository.save(new Product('Item 2', '', 5000, new TechnicalDetails(20, 100, 50, 50), 2)),
+      await productRepository.save(new Product('Item 3', '', 30, new TechnicalDetails(1, 10, 10, 10), 3))
+    ];
   }
 
   test('Should execute an order with total 4872', async () => {
-    await couponRepository.save(new Coupon("VALE20", 20, CouponType.PERCENTAGE));
-    await loadProductsDummies();
-    const placeOrder = new PlaceOrder(repositoryFactory);
+    await beaFactory.repositories().createCouponRepository()
+      .save(new Coupon("VALE20", 20, CouponType.PERCENTAGE));
+
+    const placeOrder = new PlaceOrder(beaFactory);
     const command: PlaceOrderCommand = {
-      cpf: CPF,
+      cpf: FAKE_CPF,
       orderItems: [
         { idItem: 1, quantity: 1 },
         { idItem: 2, quantity: 1 },
@@ -54,10 +52,14 @@ describe("PlaceOrder.ts", () => {
   });
 
   test('Should return an order with code 202100000002', async () => {
-    const placeOrder = new PlaceOrder(repositoryFactory);
+    const newBeanFactory = new BeanFactoryMem(1);
+    await newBeanFactory.repositories().createProductRepository()
+      .save(new Product('Item 1', '', 1000, new TechnicalDetails(3, 100, 30, 10), 1));
+
+    const placeOrder = new PlaceOrder(newBeanFactory);
     await loadProductsDummies();
     const command: PlaceOrderCommand = {
-      cpf: CPF,
+      cpf: FAKE_CPF,
       orderItems: [
         { idItem: 1, quantity: 1 }
       ],
@@ -68,10 +70,10 @@ describe("PlaceOrder.ts", () => {
     expect(response.code).toBe('202100000002');
   })
 
-  test('Should not accept order with product invalid', async () => {
-    const placeOrder = new PlaceOrder(repositoryFactory);
+  test('Should not accept order when product not found', async () => {
+    const placeOrder = new PlaceOrder(beaFactory);
     const command: PlaceOrderCommand = {
-      cpf: CPF,
+      cpf: FAKE_CPF,
       orderItems: [
         { idItem: 99, quantity: 1 }
       ],
@@ -79,6 +81,6 @@ describe("PlaceOrder.ts", () => {
     };
     await expect(async () => await placeOrder.execute(command))
       .rejects
-      .toThrow(new Error('Product 99 invalid!'));
+      .toThrow(new Error('Product 99 not found!'));
   })
 })

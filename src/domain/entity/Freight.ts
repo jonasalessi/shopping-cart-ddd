@@ -18,12 +18,13 @@ export class Freight {
 
   addProduct(orderProduct: OrderProduct) {
     this.products.push(orderProduct);
-}
+  }
 
   getTotal(): number {
     const total = this.products
       .reduce((acc, orderProduct) => acc + this.calculateBy(orderProduct), 0);
-    if (total > 0 && total < 10) {
+    const isNotMinimumValue = total > 0 && total < 10;
+    if (isNotMinimumValue) {
       return 10;
     }
     return total;

@@ -1,12 +1,12 @@
-import { Coupon, CouponType } from "../../../domain/entity/Coupon";
-import { Order } from "../../../domain/entity/Order";
-import { Product } from "../../../domain/entity/Product";
-import { TechnicalDetails } from "../../../domain/entity/TechnicalDetails";
-import OrderRepository from "../../../domain/repository/OrderRepository";
-import Connection from "../../database/Connection";
+import { Coupon, CouponType } from "domain/entity/Coupon";
+import { Order } from "domain/entity/Order";
+import { Product } from "domain/entity/Product";
+import { TechnicalDetails } from "domain/entity/TechnicalDetails";
+import OrderRepository from "domain/repository/OrderRepository";
+import Connection from "infra/database/Connection";
 
 export default class OrderRepositoryDatabase implements OrderRepository {
-  constructor(readonly connection: Connection) {}
+  constructor(readonly connection: Connection) { }
 
   async findByCode(code: string): Promise<Order | undefined> {
     try {
@@ -64,9 +64,6 @@ export default class OrderRepositoryDatabase implements OrderRepository {
     }
   }
 
-  async nextSequence(): Promise<number> {
-    throw new Error("Method not implemented.");
-  }
 
   async deleteAll(): Promise<void> {
     await this.connection.query("delete from order_product");

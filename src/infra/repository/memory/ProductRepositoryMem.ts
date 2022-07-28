@@ -1,5 +1,5 @@
-import { Product } from "../../../domain/entity/Product";
-import ProductRepository from "../../../domain/repository/ProductRepository";
+import { Product } from "domain/entity/Product";
+import ProductRepository from "domain/repository/ProductRepository";
 
 export default class ProductRepositoryMem implements ProductRepository {
 
@@ -9,17 +9,17 @@ export default class ProductRepositoryMem implements ProductRepository {
     return Promise.resolve(this.data.filter(it => ids.includes(it.id)))
   }
 
-  async saveAll(products: Product[]): Promise<void> {
-     await Promise.all(products.map(this.save.bind(this)))
+  async saveAll(products: Product[]): Promise<Product[]> {
+    return await Promise.all(products.map(it => this.save(it)))
   }
 
-  async save(product: Product): Promise<number> { 
+  async save(product: Product): Promise<Product> {
     this.data.push(product);
-    return product.id;
+    return product;
   }
 
-  deleteAll(): Promise<void> {
-    this.data = [];
+  deleteAllById(ids: number[]): Promise<void> {
+    this.data = this.data.filter(it => ids.indexOf(it.id) === -1)
     return Promise.resolve();
   }
 }

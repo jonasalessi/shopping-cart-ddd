@@ -1,18 +1,23 @@
-import { Order } from "../../domain/entity/Order";
-import RepositoryFactory from "../../domain/factory/RepositoryFactory";
-import CouponRepository from "../../domain/repository/CouponRepository";
-import OrderRepository from "../../domain/repository/OrderRepository";
-import ProductRepository from "../../domain/repository/ProductRepository";
+import SequenceGeneratorDao from "domain/dao/SequenceGeneratorDao";
+import { Order } from "domain/entity/Order";
+import { BeanFactory } from "domain/factory/BeanFactory";
+import CouponRepository from "domain/repository/CouponRepository";
+import OrderRepository from "domain/repository/OrderRepository";
+import ProductRepository from "domain/repository/ProductRepository";
 
 export default class PlaceOrder {
   private readonly productRepository: ProductRepository;
   private readonly orderRepository: OrderRepository;
   private readonly couponRepository: CouponRepository;
+  private readonly sequenceGenerator: SequenceGeneratorDao;
 
-  constructor(repositoryFactory: RepositoryFactory) {
-    this.productRepository = repositoryFactory.createProductRepository();
-    this.orderRepository = repositoryFactory.createOrderRepository();
-    this.couponRepository = repositoryFactory.createCouponRepository();
+  constructor(
+    beans: BeanFactory
+  ) {
+    this.sequenceGenerator = beans.dao().createSequenceGeneratorDao();
+    this.productRepository = beans.repositories().createProductRepository();
+    this.orderRepository = beans.repositories().createOrderRepository();
+    this.couponRepository = beans.repositories().createCouponRepository();
   }
 
   async execute(command: PlaceOrderCommand): Promise<PlaceOrderOutput> {
@@ -32,10 +37,10 @@ export default class PlaceOrder {
     const products = await this.productRepository.findProductByIds(command.orderItems.map((item) => item.idItem));
     const productsQuantity = command.orderItems.map((item) => {
       const product = products.find((prod) => item.idItem === prod.id);
-      if (!product) throw new Error(`Product ${item.idItem} invalid!`);
+      if (!product) throw new Error(`Product ${item.idItem} not found!`);
       return { product, quantity: item.quantity };
     });
-    const sequence = await this.orderRepository.nextSequence();
+    const sequence = await this.sequenceGenerator.nextSequence();
     const order = new Order(command.cpf, command.issueOrder, sequence);
     productsQuantity.forEach((item) => {
       order.addProduct(item.product, item.quantity);
