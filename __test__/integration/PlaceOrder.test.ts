@@ -3,40 +3,33 @@ import { Coupon, CouponType } from "domain/entity/Coupon";
 import { Product } from "domain/entity/Product";
 import { TechnicalDetails } from "domain/entity/TechnicalDetails";
 import { FAKE_CPF } from "../helpers/customer";
-import BeanFactoryMem from "../BeanFactoryMem";
-import { BeanFactory } from "domain/factory/BeanFactory";
+import { DaoFactory } from "domain/factory/DaoFactory";
+import RepositoryFactory from "domain/factory/RepositoryFactory";
+import BeanFactoryMem from "infra/BeanFactoryMem";
 
 describe("PlaceOrder.ts", () => {
 
-  let beaFactory: BeanFactory;
-  let products: Product[];
+  let daoFactory: DaoFactory;
+  let repositoryFactory: RepositoryFactory;
 
-  beforeAll(async () => {
-    beaFactory = new BeanFactoryMem(1);
-    products = await loadProductsDummies();
+  beforeEach(async () => {
+    const beaFactory = new BeanFactoryMem(1);
+    daoFactory = beaFactory.dao();
+    repositoryFactory = beaFactory.repositories();
   });
 
-  afterAll(() => {
-    beaFactory.repositories().createOrderRepository().deleteAll();
-    beaFactory.repositories().createCouponRepository().deleteAll();
-    beaFactory.repositories().createProductRepository()
-      .deleteAllById(products.map(it => it.id));
-  });
-
-  const loadProductsDummies = async (): Promise<Product[]> => {
-    const productRepository = beaFactory.repositories().createProductRepository();
-    return [
-      await productRepository.save(new Product('Item 1', '', 1000, new TechnicalDetails(3, 100, 30, 10), 1)),
-      await productRepository.save(new Product('Item 2', '', 5000, new TechnicalDetails(20, 100, 50, 50), 2)),
-      await productRepository.save(new Product('Item 3', '', 30, new TechnicalDetails(1, 10, 10, 10), 3))
-    ];
+  const loadProductsDummies = async () => {
+    const productRepository = repositoryFactory.createProductRepository();
+    await productRepository.save(new Product('Item 1', '', 1000, new TechnicalDetails(3, 100, 30, 10), 1));
+    await productRepository.save(new Product('Item 2', '', 5000, new TechnicalDetails(20, 100, 50, 50), 2));
+    await productRepository.save(new Product('Item 3', '', 30, new TechnicalDetails(1, 10, 10, 10), 3));
   }
 
   test('Should execute an order with total 4872', async () => {
-    await beaFactory.repositories().createCouponRepository()
+    await repositoryFactory.createCouponRepository()
       .save(new Coupon("VALE20", 20, CouponType.PERCENTAGE));
-
-    const placeOrder = new PlaceOrder(beaFactory);
+    await loadProductsDummies();
+    const placeOrder = new PlaceOrder(daoFactory, repositoryFactory);
     const command: PlaceOrderCommand = {
       cpf: FAKE_CPF,
       orderItems: [
@@ -52,12 +45,11 @@ describe("PlaceOrder.ts", () => {
   });
 
   test('Should return an order with code 202100000002', async () => {
-    const newBeanFactory = new BeanFactoryMem(1);
-    await newBeanFactory.repositories().createProductRepository()
+    await repositoryFactory.createProductRepository()
       .save(new Product('Item 1', '', 1000, new TechnicalDetails(3, 100, 30, 10), 1));
-
-    const placeOrder = new PlaceOrder(newBeanFactory);
+    const placeOrder = new PlaceOrder(daoFactory, repositoryFactory);
     await loadProductsDummies();
+
     const command: PlaceOrderCommand = {
       cpf: FAKE_CPF,
       orderItems: [
@@ -71,7 +63,7 @@ describe("PlaceOrder.ts", () => {
   })
 
   test('Should not accept order when product not found', async () => {
-    const placeOrder = new PlaceOrder(beaFactory);
+    const placeOrder = new PlaceOrder(daoFactory, repositoryFactory);
     const command: PlaceOrderCommand = {
       cpf: FAKE_CPF,
       orderItems: [

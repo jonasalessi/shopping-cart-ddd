@@ -1,6 +1,7 @@
 import SequenceGeneratorDao from "domain/dao/SequenceGeneratorDao";
 import { Order } from "domain/entity/Order";
-import { BeanFactory } from "domain/factory/BeanFactory";
+import { DaoFactory } from "domain/factory/DaoFactory";
+import RepositoryFactory from "domain/factory/RepositoryFactory";
 import CouponRepository from "domain/repository/CouponRepository";
 import OrderRepository from "domain/repository/OrderRepository";
 import ProductRepository from "domain/repository/ProductRepository";
@@ -12,12 +13,13 @@ export default class PlaceOrder {
   private readonly sequenceGenerator: SequenceGeneratorDao;
 
   constructor(
-    beans: BeanFactory
+    dao: DaoFactory,
+    repository: RepositoryFactory
   ) {
-    this.sequenceGenerator = beans.dao().createSequenceGeneratorDao();
-    this.productRepository = beans.repositories().createProductRepository();
-    this.orderRepository = beans.repositories().createOrderRepository();
-    this.couponRepository = beans.repositories().createCouponRepository();
+    this.sequenceGenerator = dao.createSequenceGeneratorDao();
+    this.productRepository = repository.createProductRepository();
+    this.orderRepository = repository.createOrderRepository();
+    this.couponRepository = repository.createCouponRepository();
   }
 
   async execute(command: PlaceOrderCommand): Promise<PlaceOrderOutput> {

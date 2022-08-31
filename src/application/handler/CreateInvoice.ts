@@ -1,4 +1,5 @@
 
+import Invoice from 'domain/entity/Invoice';
 import PlacedOrder from 'domain/event/PlacedOrder';
 import RepositoryFactory from 'domain/factory/RepositoryFactory';
 import InvoiceRepository from 'domain/repository/InvoiceRepository';
@@ -12,8 +13,9 @@ export class CreateInvoice implements Handler {
     this.invoiceRepository = repositoryFactory.createInvoiceRepository();
   }
 
-  handle(event: PlacedOrder): Promise<void> {
-    console.log('Do something with ', event);
-    return Promise.resolve();
+  async handle(event: PlacedOrder): Promise<void> {
+    const invoice = new Invoice(event.order.getCpf())
+    event.order.getProducts().forEach(product => invoice.addItem(product));
+    this.invoiceRepository.save(invoice);
   }
 }

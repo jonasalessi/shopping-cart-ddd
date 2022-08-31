@@ -1,7 +1,4 @@
-import { Coupon, CouponType } from "domain/entity/Coupon";
 import { Order } from "domain/entity/Order";
-import { Product } from "domain/entity/Product";
-import { TechnicalDetails } from "domain/entity/TechnicalDetails";
 import OrderRepository from "domain/repository/OrderRepository";
 import Connection from "infra/database/Connection";
 
@@ -9,36 +6,7 @@ export default class OrderRepositoryDatabase implements OrderRepository {
   constructor(readonly connection: Connection) { }
 
   async findByCode(code: string): Promise<Order | undefined> {
-    try {
-      const [orderData] = await this.connection.query("select * from p_order where code = $1", [code]);
-      if (!orderData) throw new Error("Order not found");
-      const order = new Order(orderData.cpf, new Date(orderData.issue_date), orderData.sequence);
-      const orderProducts = await this.connection.query("select * from order_product where id_order = $1", [
-        orderData.id_order,
-      ]);
-      for (const orderProduct of orderProducts) {
-        const [data] = await this.connection.query("select * from product where id_product = $1", [
-          orderProduct.id_product,
-        ]);
-        const tech = new TechnicalDetails(data.weight, data.height, data.width, data.length);
-        const prod = new Product(data.name, data.description, data.price, tech, data.id);
-        order.addProduct(prod, orderProduct.quantity);
-      }
-      if (orderData.coupon) {
-        const [couponData] = await this.connection.query("select * from coupon where code = $1", [orderData.coupon]);
-        const coupon = new Coupon(
-          couponData.code,
-          parseFloat(couponData.percentage),
-          CouponType.PERCENTAGE,
-          new Date(couponData.expire_date)
-        );
-        order.addCoupon(coupon);
-      }
-      return order;
-    } catch (e) {
-      console.error(e);
-      throw e;
-    }
+    throw new Error('Method not implemented.');
   }
 
   async save(order: Order): Promise<void> {

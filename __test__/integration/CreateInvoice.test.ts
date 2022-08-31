@@ -1,14 +1,13 @@
 import PlacedOrder from "domain/event/PlacedOrder";
 import { Order } from "domain/entity/Order";
 import { Product } from "domain/entity/Product";
-import PostgreSqlConnectionAdapter from "infra/database/PostgreSqlConnectionAdapter";
-import RepositoryFactoryDatabase from "infra/repository/database/RepositoryFactoryDatabase";
 import { FAKE_CPF } from "../helpers/customer";
 import { createProduct } from "../helpers/product";
 import { CreateInvoice } from "application/handler/CreateInvoice";
+import RepositoryFactoryMem from "infra/repository/memory/RepositoryFactoryMem";
 
 describe('CreateInvoice.ts', () => {
-  const repositoryFactory = new RepositoryFactoryDatabase(new PostgreSqlConnectionAdapter());
+  const repositoryFactory = new RepositoryFactoryMem();
   const invoiceRepository = repositoryFactory.createInvoiceRepository();
   const productRepository = repositoryFactory.createProductRepository();
 

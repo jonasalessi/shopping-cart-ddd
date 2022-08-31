@@ -5,8 +5,8 @@ export default class ProductRepositoryMem implements ProductRepository {
 
   private data: Product[] = [];
 
-  findProductByIds(ids: number[]): Promise<Product[]> {
-    return Promise.resolve(this.data.filter(it => ids.includes(it.id)))
+  async findProductByIds(ids: number[]): Promise<Product[]> {
+    return this.data.filter(it => ids.includes(it.id))
   }
 
   async saveAll(products: Product[]): Promise<Product[]> {
@@ -14,12 +14,19 @@ export default class ProductRepositoryMem implements ProductRepository {
   }
 
   async save(product: Product): Promise<Product> {
-    this.data.push(product);
-    return product;
+    const id = this.data.length + 1;
+    const productCopy = new Product(
+      product.name,
+      product.description,
+      product.value,
+      product.technicalDetails,
+      id
+    );
+    this.data.push(productCopy);
+    return productCopy;
   }
 
-  deleteAllById(ids: number[]): Promise<void> {
+  async deleteAllById(ids: number[]): Promise<void> {
     this.data = this.data.filter(it => ids.indexOf(it.id) === -1)
-    return Promise.resolve();
   }
 }
